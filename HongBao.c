@@ -30,10 +30,11 @@ int main() {
     for (i = 0; i <= money_sum; ++i) {
         dp[i] = (int *)malloc(sizeof(int) * (money_sum + 1));
     }
+    printf("sucess allocate\n");
     // int dp[1000][1000] = {};
     // init
-    for (i = 1; i <= num_redp; ++i) {
-        for (j = 1; j <= money_sum; ++j) {
+    for (i = 0; i <= num_redp; ++i) {
+        for (j = 0; j <= money_sum; ++j) {
             dp[i][j] = False;
         }
     }
@@ -50,6 +51,19 @@ int main() {
                     dp[i][j] = True;
                     break;
                 }
+            }
+        }
+    }
+
+
+    // collect the red bag
+    int init_sum = money_sum;
+    for(i=num_redp;i>0;--i){
+        for(k=0;k<LN;++k){
+            if(init_sum - luck_nums[k] >= 0 && dp[i-1][init_sum - luck_nums[k]]){
+                init_sum = init_sum - luck_nums[k];
+                printf("%d:%.2f ",i, luck_nums[k]/100.0);
+                break;
             }
         }
     }
