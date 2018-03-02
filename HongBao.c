@@ -57,6 +57,10 @@ int main() {
 
 
     // collect the red bag
+    if(!dp[num_redp][money_sum]){
+        printf("failed!");
+        return 0;
+    }
     int init_sum = money_sum;
     for(i=num_redp;i>0;--i){
         for(k=0;k<LN;++k){
@@ -67,7 +71,6 @@ int main() {
             }
         }
     }
-    printf("\n%d\n", dp[num_redp][money_sum]);
     return 0;
 }
 
