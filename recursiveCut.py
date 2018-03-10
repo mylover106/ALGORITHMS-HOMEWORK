@@ -66,16 +66,14 @@ def bestSolve(Width, High, window, asWhat):
 
 if __name__ == "__main__":
 
-    Width = 110
+    Width = 130
     High = 100
 
     Sizes = [(54, 29), (70, 50), (30, 41)] # pay attention
     Sizes.extend([(s[1], s[0]) for s in Sizes])
     # we need to range the Size, so we don't need to range the Map
 
-    Map = np.ones((Width, High))
-    maxUse = 0
-    Ans = 0 # ans is the split picture of the program
+    Map = np.ones((Width, High)) 
 
     AS_WIDTH = True
     AS_HIGH  = False
@@ -83,9 +81,12 @@ if __name__ == "__main__":
 
     ans = bestSolve(Width, High, (0,0), True)
     plotAns(ans,Map,0)
-    # pprint(ans)
+    pprint(ans)
 
     plt.imshow(Map)
+    percent = ans[0][0] / (Width * High) * 100
+    title = "%.2f" % percent
+    plt.title(title + "%")
     plt.show()
     print ans[0][0]/(Width * High) * 100 , "%"
 
