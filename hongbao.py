@@ -1,5 +1,4 @@
 #encoding utf-8
-import re
 
 def getMoney():
     mny = input("input the money: \n")
@@ -24,7 +23,7 @@ def getLucky():
     luckys.sort(reverse=1)
     return luckys
 
-def search(before_sum,now_step,all_step):
+def Basic_search(before_sum,now_step,all_step):
     if before_sum + (all_step - now_step)*luckys[-1] > money:
         return False,[]
     elif before_sum + (all_step - now_step)*luckys[0] < money:
@@ -41,6 +40,8 @@ def search(before_sum,now_step,all_step):
                 return True, hongbaos
         return False,[]
 
+def binary_search(lucky_index, before_num, )
+
 
 if __name__ == "__main__":
 
@@ -52,8 +53,9 @@ if __name__ == "__main__":
     num = getNum()
     luckys = getLucky()
     hongbaos = []
-    sucess, hongbaos = search(0,0,num)
+    sucess, hongbaos = Basic_search(0,0,num)
     print hongbaos
+    
     """
     as I see this problem can only be solved by search
     but the problem is too complex, to solve this problem efficently we can use Heuristic alogrithm
