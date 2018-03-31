@@ -6,6 +6,7 @@
 using namespace std;
 
 #define oo (1 << 4*sizeof(int))
+#define NOT_COUNT -1
 
 int adjm[250][250];
 int dp[250][250]; // dp[root][num]
@@ -14,9 +15,11 @@ int rootdp[250][250][250];  // rootdp[root][step][volume]
                             // nodes' num
 int n,p;
 
-int get_min_cut(int root, int n);
+
 int get_son_num(int);
 int get_kth_son(int,int);
+int DP(int root, int p);
+int rootDP(int root, int ith, int p);
 
 int main() {
     cin >> n >> p;
@@ -30,74 +33,58 @@ int main() {
     // init the dp[][]
     for (int i = 0; i <= n; ++i) {
         for (int j = 0; j <= n; ++j) {
-            dp[i][j] = oo;
+            dp[i][j] = NOT_COUNT;
         }
     }
     for (int i = 0; i <= n; ++i) {
         for (int j = 0; j <= n; ++j) {
             for (int k = 0; k <= n; ++k)
-            rootdp[i][j][k] = oo;
+            rootdp[i][j][k] = NOT_COUNT;
         }
     }
     for (int i = 0; i <= n; ++i) {
         dp[i][1] = get_son_num(i);
     }
-
-    // test the get_son_num()
-    // for (int i = 0; i <= n; ++i) {
-    //     printf("%d \n", dp[i][1]);
-    // }
-
-
-    // test the get_min_cut()
     
-    // start the search
-    for (int num = 0; num <= p; ++num) {
-        for (int root = n; root > 0; --root) {
-            // get n-1 nodes from root's son
-            dp[root][num] = get_min_cut(root, num-1);
-            cout << dp[root][n] << endl;
-        }
-    }  
-    cout << dp[1][p] << endl;
-
-    // get the correct ans
-    // int minimal = oo;
-    // for (int i = 1; i <= n; ++i) {
-    //     minimal = min(dp[i][n], minimal);
-    // }
-    // cout << minimal << endl;
+    int minimal = DP(1, p);
+    for (int i = 2; i <= n; ++i) {
+        minimal = min(minimal, DP(i, p)+1);
+    }
+    cout << minimal << endl;
 } 
 
-// need to test this function !!!
-int get_min_cut(int root, int n) {
-    // before we start the n-th search we assume the 
-    // n-1 dp has been already finished
-    int son_sum = get_son_num(root);
-    // beause the before dp has been compute the we just
-    // need to compute the (volume == n)'s case
-    int temp;
-    if (n == 0) {
-        for (int i = 1; i <= son_sum; ++i) {
-            rootdp[root][i][0] = i;
+int DP(int root, int p) {
+    if (p == 1) return get_son_num(root);
+    if (get_son_num(root) == 0 && p > 1){ 
+        return oo;
         }
+    if (dp[root][p]!=NOT_COUNT) return dp[root][p];
+    else {
+        dp[root][p] = rootDP(root, get_son_num(root), p-1);
     }
-    for (int i = 1; i <= son_sum; ++i) {
-        
-        int minimal = oo;
-        // v has a max and the max is not n attention
-        for (int v = 0; v <= n; ++v) {
-            cout << v << endl;
-            temp =  rootdp[root][i-1][n-v] + 
-                    dp[get_kth_son(root,i)][v];
-            if (v == 0)
-            temp =  rootdp[root][i-1][n-v] + 1;
-            minimal = min(temp, minimal);
-        }
-    }
-    
-    return rootdp[root][son_sum][n];
+    return dp[root][p];
 }
+
+
+int rootDP(int root, int ith, int p) {
+    if (p == 0) return ith;
+    if (ith == 1 ) {
+        return DP(get_kth_son(root, 1), p);
+    } 
+    else if (rootdp[root][ith][p]!=NOT_COUNT) return rootdp[root][ith][p];
+    else {
+        for (int v = 0; v <= p; ++v) {
+            if (v == 0) {
+                rootdp[root][ith][p] =  rootDP(root,ith-1,p-v) + 1;
+            } else {
+                rootdp[root][ith][p] =  min(rootdp[root][ith][p], 
+                                        rootDP(root,ith-1,p-v) + DP(get_kth_son(root, ith),v));
+            }
+        }
+    }
+    return rootdp[root][ith][p];
+}
+
 
 int get_son_num(int x) {
     int sum = 0;
