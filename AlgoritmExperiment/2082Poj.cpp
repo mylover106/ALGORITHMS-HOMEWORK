@@ -26,7 +26,8 @@ int main() {
     long long temp;
     while(n != -1) {
         for (int i = 0; i < n; ++i) {
-            cin >> w >> h;
+            // cin >> w >> h;
+            scanf("%lld %lld", &w, &h);
             if (i == 0) {
                 maximal = w*h;
                 temp_loc.high = h;
@@ -37,10 +38,15 @@ int main() {
                 now_len += w;
                 temp = get_max_merge(w, h);
                 maximal = max(maximal, temp);
-                update_high_loc(w,h);   
+                update_high_loc(w,h);  
+                // for (int k = 0; k < high_loc.size(); ++k){
+                //     cout << "step" << endl;
+                //     cout << "high" << high_loc[k].high << endl;
+                //     cout << "loc " << high_loc[k].loc << endl;
+                // } 
             }
         }
-        cout <<  maximal << endl;
+        printf("%lld\n",maximal);
         scanf("%d", &n);
         high_loc.clear();
         now_len = 0;
@@ -55,7 +61,7 @@ long long get_max_merge(long long w, long long h) {
     for (i = high_loc.begin(); i != high_loc.end(); ++i) {
          if ((*i).high <= h) {
              maximal = max(maximal, (*i).high * (now_len - (*i).loc + 1));
-         } else break;
+         } 
     }
     maximal = max(maximal, w*h);
     return maximal;
