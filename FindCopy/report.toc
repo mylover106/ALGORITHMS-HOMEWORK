@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {1}题目描述}{2}
+\contentsline {section}{\numberline {2}algorithm}{2}
+\contentsline {subsection}{\numberline {2.1}algorithm idea}{2}
+\contentsline {subsection}{\numberline {2.2}data structure}{2}
+\contentsline {subsection}{\numberline {2.3}code implement enviroment}{2}
+\contentsline {subsection}{\numberline {2.4}code}{2}
+\contentsline {section}{\numberline {3}experiment data and result}{2}
+\contentsline {subsection}{\numberline {3.1}data}{2}
+\contentsline {subsection}{\numberline {3.2}result}{2}
+\contentsline {section}{\numberline {4}conclusion}{2}
+\contentsline {subsection}{\numberline {4.1}anlysis}{2}
+\contentsline {subsection}{\numberline {4.2}summary}{2}
