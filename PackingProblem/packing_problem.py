@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from __future__ import division
 from io import open
 import sys
 import time
@@ -94,12 +93,12 @@ class CutMethod(object):
         self.DNAs = alive_DNAs + new_DNAs
         self.delete_same()
     
-    def select_individual(self, DNAs, n=10, prob=0.3):
+    def select_individual(self, DNAs, n=10, prob=0.30):
         evalue = self.evalue
 
-        compare = lambda x, y: int(evalue(x)[0] > evalue(y)[0]) - 1
+        compare_key = lambda x: evalue(x)[0]
         
-        DNAs = sorted(DNAs, compare) 
+        DNAs = sorted(DNAs, key=compare_key, reverse=False) 
         must_alive = DNAs[:n]
         
         self.CONVEGE.append(evalue(DNAs[0])[0])
@@ -111,7 +110,7 @@ class CutMethod(object):
         
         return must_alive + bad_DNA
         
-    def mutation(self, DNAs, prob=0.55):
+    def mutation(self, DNAs, prob=0.20):
         # copy DNAs
         for i in range(len(DNAs)):
             DNAs[i] = DNAs[i][:]
@@ -120,18 +119,40 @@ class CutMethod(object):
         
         
         _range = range(len(DNAs[0][0]))
+        del_list = []
         for i in range(len(DNAs)):
+            mutation_flag = False
             if random.random() < prob:
-                k, j = random.sample(_range, 2)
-                DNAs[i][0][k], DNAs[i][0][j]= DNAs[i][0][j], DNAs[i][0][k] 
+                mutation_flag = True
+                for it in range(len(DNAs[0][0])//4):
+                    k, j = random.sample(_range, 2)
+                    DNAs[i][0][k], DNAs[i][0][j]= DNAs[i][0][j], DNAs[i][0][k] 
                 
             for it in range(len(DNAs[i][0])):
                 if random.random() < prob:
+                    mutation_flag = True
                     DNAs[i][1][it] = not DNAs[i][1][it]
                     
                 if random.random() < prob:
+                    mutation_flag = True
                     DNAs[i][2][it] = not DNAs[i][2][it]
-        
+            
+            #if random.random() < prob:
+            #    mutation_flag = True
+            #    t, k = random.sample(_range, 2)
+            #    DNAs[i][1][t] = not DNAs[i][1][t]
+            #    DNAs[i][1][k] = not DNAs[i][1][k]
+            #if random.random() < prob:
+            #    mutation_flag = True
+            #    t, k = random.sample(_range, 2)
+            #    DNAs[i][1][t] = not DNAs[i][1][t]
+            #    DNAs[i][1][k] = not DNAs[i][1][k]
+            
+            if mutation_flag == False:
+                del_list.append(DNAs[i])
+        for i in range(len(del_list)):
+            DNAs.remove(del_list[i])
+
         return DNAs
     
     def sexual(self, DNAs):
@@ -151,7 +172,7 @@ class CutMethod(object):
             return []
         
         new_DNAs = []
-        for DNA in DNAs:
+        for DNA in sex_DNAs:
             
             DNA2 = random.choice(sex_DNAs)
             index = random.choice(_range)
@@ -186,16 +207,22 @@ class CutMethod(object):
         DNAs = self.DNAs
         
         new_DNAs = []
-        for i in DNAs:
-            if i not in new_DNAs:
-                new_DNAs.append(i)
+        for i in range(len(DNAs)):
+            if DNAs[i] not in new_DNAs:
+                flag = False
+                for gen in new_DNAs:
+                    if self.evalue(gen)[0] == self.evalue(DNAs[i])[0]:
+                        flag = True
+                        # print ("deleted\n")
+                        break
+                if flag == False: new_DNAs.append(DNAs[i][:])
                 
         DNAs[:] = new_DNAs[:]
         
     def plot(self, k):
         left, s, loc =  self.evalue(self.DNAs[k])
         
-        color = range(1, len(loc)+1)
+        color = list(range(1, len(loc)+1))
         random.shuffle(color)
         
         pi = np.zeros(self.spaces[0])
@@ -224,14 +251,14 @@ class CutMethod(object):
 
 def main():
     epoch = int(sys.argv[1])
-    compare = lambda x, y: int(x[0]*x[1] < y[0]*y[1]) - 1
+    compare_key = lambda x: x[0]*x[1]
     lst = []
     with open('lw292.txt') as f:
         lst = f.readlines()
         lst = [i.strip().split() for i in lst]
         lst = [(int(x[0]), int (x[1])) for x in lst]
 
-    lst = sorted(lst, compare)
+    lst = sorted(lst, key=compare_key, reverse=True)
     # print lst
 
     packing = CutMethod((60, 30), lst)
@@ -239,13 +266,15 @@ def main():
     s_time = time.clock()
     data = []
     for i in range(epoch):
-        print i,
+        if i % 50 == 0: 
+            print ("this is the ", i, "th epoch", end="\n", flush=True)
+            # sys.stdout.flush()
         packing.get_next_generation()
 
     e_time = time.clock()
 
     cost_time = e_time - s_time
-    print "Cost Time: %d min %d s " % (int(cost_time / 60), int (cost_time % 60))
+    print ("Cost Time: %d min %d s " % (int(cost_time / 60), int (cost_time % 60)))
 
     for i in range(10):
         packing.plot(i)
@@ -255,7 +284,7 @@ def main():
     #plt.pause(5)
     #plt.close()
     plt.show()
-    print "OVER"
+    print ("OVER")
 
 
 if __name__ == "__main__":
